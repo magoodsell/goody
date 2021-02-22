@@ -14,19 +14,19 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse, DT)
 
 # loading in data of original test
-test_0.09 <- read_csv("New_modified_TestResults_circle_rad_0.09.csv")
-test_0.1 <- read_csv("New_modified_TestResults_circle_rad_0.1.csv")
-test_0.11 <- read_csv("New_modified_TestResults_circle_rad_0.11.csv")
+test_0.09 <- read_csv("Data/New_modified_TestResults_circle_rad_0.09.csv")
+test_0.1 <- read_csv("Data/New_modified_TestResults_circle_rad_0.1.csv")
+test_0.11 <- read_csv("Data/New_modified_TestResults_circle_rad_0.11.csv")
 
 # loading in data of oldG with newR
-new_test_0.05 <- read_csv("OldG_newR_TestResults_circle_rad_0.05.csv")
-new_test_0.1 <- read_csv("OldG_newR_TestResults_circle_rad_0.1.csv")
-new_test_0.15 <- read_csv("OldG_newR_TestResults_circle_rad_0.15.csv")
+new_test_0.05 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.05.csv")
+new_test_0.1 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.1.csv")
+new_test_0.15 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.15.csv")
 
 # loading in data of newG with oldR 
-new2_test_0.09 <- read_csv("NewG_OldR_TestResults_circle_rad_0.09.csv")
-new2_test_0.1 <- read_csv("NewG_OldR_TestResults_circle_rad_0.1.csv")
-new2_test_0.11 <- read_csv("NewG_OldR_TestResults_circle_rad_0.11.csv")
+new2_test_0.09 <- read_csv("Data/NewG_OldR_TestResults_circle_rad_0.09.csv")
+new2_test_0.1 <- read_csv("Data/NewG_OldR_TestResults_circle_rad_0.1.csv")
+new2_test_0.11 <- read_csv("Data/NewG_OldR_TestResults_circle_rad_0.11.csv")
 ```
 
 ```{r wrangling orginal test parameters, echo=FALSE}

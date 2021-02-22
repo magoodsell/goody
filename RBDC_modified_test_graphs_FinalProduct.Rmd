@@ -35,23 +35,37 @@ dat_0.11 <- test_0.11 %>%
 
 # binding rows of the data
 all_dat <- bind_rows(dat_0.09, dat_0.1, dat_0.11) %>% 
-  mutate(id = row_number()) # give it an index
+  mutate(id = row_number()) %>% # give it an index
+  rename("Search Radius" = "Radius")  
+  #mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) ## results in error for chunk starting on line 201
 
 ### getting better labels on the facet_grid
 label_all_dat <- all_dat
 
-label_all_dat$Radius <- factor(label_all_dat$Radius, levels =c("0.099", "0.01", "0.011"),
+label_all_dat$Radius <- factor(label_all_dat$`Search Radius`, levels =c("0.099", "0.01", "0.011"),
                                labels = c("0.099", " 0.010", "0.011"))
+
+### have to create a new data set then pivot longer the average count 
+new <- all_dat %>% 
+  select(-c(`Distance 1`, `Distance 2`, `Highest Vote`, "id")) %>% 
+  pivot_longer(-c(`Search Radius`, Resolution, "test_circle"),
+               names_to="Layer", 
+               values_to = "Layer_Vote")
 ```
 
 # Graphs {.tabset .tabset-fade .tabset-pills}
 
-To do:  
-
-- create boxplot graph to show the spread of the distribution for method 2
-- Create a bar graph for an aver layer mean. 
+- NOTE THE CHANGE IN SCALE BETWEEN THE GRAPHS - SCALES MAY BE INDEPENDENT. 
 
 ## Line Graphs 
+
+Insights: 
+
+- Method 1 seems to always to more accurate, and it appears to be radius independent
+
+- Method 1 seems to favor radius of .099 
+
+- Method 2 also prefers a search radius of 0.099
 
 ### Data from test circle of radius 0.099
 
@@ -59,42 +73,43 @@ To do:
 
 label_all_dat %>% 
   filter(test_circle == "Rad_0.09") %>%
+  mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) %>% 
   ggplot(aes(group=Resolution)) +
   geom_point(aes(id, y=`Distance 1`), color="blue4") + 
   geom_line(aes(id, y=`Distance 1`), color="blue4") + 
   geom_point(aes(id, y=`Distance 2`)) + 
   geom_line(aes(id, y=`Distance 2`)) +
-  facet_grid(Radius~Resolution,
+  facet_grid(`Search Radius`~Resolution,
              labeller=label_both) + 
   labs(title = "Method 1 & 2 results from imperfect circle of radius 0.09", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank(), 
-        strip.background = element_rect(fill="grey48"))
+        axis.ticks.x = element_blank())
 ```
+
 
 ### Data from test circle of radius 0.01
 
 ```{r testRadius-0.01}
 label_all_dat %>% 
   filter(test_circle == "Rad_0.1") %>%
+  mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) %>% 
   ggplot(aes(group=Resolution)) +
   geom_point(aes(id, y=`Distance 1`), color="blue4") + 
   geom_line(aes(id, y=`Distance 1`), color="blue4") + 
   geom_point(aes(id, y=`Distance 2`)) + 
   geom_line(aes(id, y=`Distance 2`)) +
-  facet_grid(Radius~Resolution,
+  facet_grid(`Search Radius`~Resolution,
              labeller=label_both, 
              scales = "free") + 
-  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.09", 
+  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.01", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank(), 
-        strip.background = element_rect(fill="grey48"))
+        axis.ticks.x = element_blank())
 
 ```
 
@@ -104,21 +119,21 @@ label_all_dat %>%
 ```{r testRadius-0.011, echo=FALSE}
 label_all_dat %>% 
   filter(test_circle == "Rad_0.11") %>%
+  mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) %>% 
   ggplot(aes(group=Resolution)) +
   geom_point(aes(id, y=`Distance 1`), color="blue4") + 
   geom_line(aes(id, y=`Distance 1`), color="blue4") + 
   geom_point(aes(id, y=`Distance 2`)) + 
   geom_line(aes(id, y=`Distance 2`)) +
-  facet_grid(Radius~Resolution,
+  facet_grid(`Search Radius`~Resolution,
              labeller=label_both, 
              scales = "free") + 
-  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.09", 
+  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.011", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank(), 
-        strip.background = element_rect(fill="grey48"))
+        axis.ticks.x = element_blank())
 ```
 
 
@@ -128,12 +143,12 @@ label_all_dat %>%
 
 ```{r Distance 1 distribution}
 all_dat %>% 
-  ggplot(aes(fct_inorder(as.factor(Radius)), y=`Distance 1`, color=fct_inorder(as.factor(Radius)))) +
+  ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 1`, color=fct_inorder(as.factor(`Search Radius`)))) +
   geom_boxplot() + 
   geom_jitter() +
   labs(title = "Overall Distribution of Method 1 by Radius and Resolution", 
        x = "Search Radius") +
-  facet_grid(~Resolution, labeller = label_both) +
+  facet_grid(`Search Radius`~Resolution, labeller = label_both) +
   theme(legend.position = "none")
 ```
 
@@ -142,7 +157,7 @@ all_dat %>%
 ```{r overall distribution}
 ### Overall distribution of method/Distance 1
 all_dat %>% 
-  ggplot(aes(fct_inorder(as.factor(Radius)), y=`Distance 1`, color=fct_inorder(as.factor(Radius)))) +
+  ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 1`, color=fct_inorder(as.factor(`Search Radius`)))) +
   geom_boxplot() + 
   geom_jitter() +
   labs(title = "Overall Distribution of Method 1 by Radius", 
@@ -155,7 +170,7 @@ all_dat %>%
 ```{r Distance 2 Distribution}
 ### distribution of method 2
 all_dat %>% 
-  ggplot(aes(fct_inorder(as.factor(Radius)), y=`Distance 2`, color=fct_inorder(as.factor(Radius)))) +
+  ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 2`, color=fct_inorder(as.factor(`Search Radius`)))) +
   geom_boxplot() + 
   geom_jitter() +
   labs(title = "Overall Distribution of Method 2 by Radius and Resolution", 
@@ -166,9 +181,9 @@ all_dat %>%
 
 ### Overall Distribution of Method 2
 
-```{r}
+```{r overal distribution of method 2}
 all_dat %>% 
-  ggplot(aes(fct_inorder(as.factor(Radius)), y=`Distance 2`, color=fct_inorder(as.factor(Radius)))) +
+  ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 2`, color=fct_inorder(as.factor(`Search Radius`)))) +
   geom_boxplot() + 
   geom_jitter() +
   labs(title = "Overall Distribution of Method 2 by Radius", 
@@ -177,21 +192,25 @@ all_dat %>%
 
 ## Bar plots of Average Votes
 
+Insights:
+
+- Expected behavior on the bar graphs
+
 ### Overall Average Highest Votes
 
 ```{r overall}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding. 
 test <- all_dat %>%
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
   round(., digits = 2) %>% 
   pull(avg_high_vote)
  
 all_dat %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
-  ggplot(aes(x=fct_inorder(as.factor(Radius)), y=avg_high_vote, fill=Radius)) +
+  ggplot(aes(x=fct_inorder(as.factor(`Search Radius`)), y=avg_high_vote, fill=`Search Radius`)) +
   geom_col(position = "dodge") +
   geom_text(aes(label=test), nudge_y = 1) +
   facet_grid(~Resolution, labeller = label_both) +
@@ -206,23 +225,23 @@ all_dat %>%
 
 ### Average highest vote for test circle of 0.09
 
-```{r}
+```{r avg high vote 0.09}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding.
 
 #getting the proper numbers to label with  for test circle 0.01
 test_9 <- all_dat %>%
   filter(test_circle == "Rad_0.09") %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
   round(., digits = 2) %>% 
   pull(avg_high_vote)
  
 all_dat %>% 
   filter(test_circle == "Rad_0.09") %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
-  ggplot(aes(x=fct_inorder(as.factor(Radius)), y=avg_high_vote, fill=Radius)) +
+  ggplot(aes(x=fct_inorder(as.factor(`Search Radius`)), y=avg_high_vote, fill=`Search Radius`)) +
   geom_col(position = "dodge") +
   geom_text(aes(label=test_9), nudge_y = 1) +
   facet_grid(~Resolution, labeller = label_both) +
@@ -238,22 +257,22 @@ all_dat %>%
 
 ### Average highest vote for test circle of 0.01
 
-```{r}
+```{r avg high vote 0.01}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding.
 
 test_1 <- all_dat %>%
   filter(test_circle == "Rad_0.1") %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
   round(., digits = 2) %>% 
   pull(avg_high_vote)
 
 all_dat %>% 
   filter(test_circle == "Rad_0.1") %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
-  ggplot(aes(x=fct_inorder(as.factor(Radius)), y=avg_high_vote, fill=Radius)) +
+  ggplot(aes(x=fct_inorder(as.factor(`Search Radius`)), y=avg_high_vote, fill=`Search Radius`)) +
   geom_col(position = "dodge") +
   geom_text(aes(label=test_1), nudge_y = 1) +
   facet_grid(~Resolution, labeller = label_both) +
@@ -268,22 +287,22 @@ all_dat %>%
 
 ### Average highest vote for test circle of 0.011
 
-```{r}
+```{r avg high vote 0.011}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding.
 #getting the proper numbers to label with for test circle 0.011
 test_11 <- all_dat %>%
   filter(test_circle == "Rad_0.11") %>% 
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
   round(., digits = 2) %>% 
   pull(avg_high_vote)
 
 all_dat %>% 
   filter(test_circle == "Rad_0.11") %>%
-  group_by(Radius, Resolution) %>% 
+  group_by(`Search Radius`, Resolution) %>% 
   summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
-  ggplot(aes(x=fct_inorder(as.factor(Radius)), y=avg_high_vote, fill=Radius)) +
+  ggplot(aes(x=fct_inorder(as.factor(`Search Radius`)), y=avg_high_vote, fill=`Search Radius`)) +
   geom_col(position = "dodge") +
   geom_text(aes(label=test_11), nudge_y = 1) +
   facet_grid(~Resolution, labeller = label_both) +
@@ -299,8 +318,21 @@ all_dat %>%
 
 ## Average Layer mean 
 
-```{r}
+Insights:
 
+- Note the high confidence spikes of search radius of 0.099.
+
+```{r avg layer mean}
+new %>% 
+  group_by(`Search Radius`, Resolution, test_circle, Layer) %>% 
+  summarise(lay_avg = mean(Layer_Vote)) %>% 
+  ggplot(aes(x=test_circle, y=lay_avg, group=Layer, fill=Layer))+
+  geom_col(position ="dodge") + 
+  facet_grid(`Search Radius`~Resolution, labeller = label_both, scales = "free") + 
+  labs(title = "Average vote every box outside the highest vote",
+       y="Average layer vote", 
+       x="Test circle") +
+  theme(axis.text.x = element_text(angle = 90))
 ```
 
 
