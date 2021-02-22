@@ -1,11 +1,12 @@
 ---
-title: "RBDC Presentation"
+title: "Hough_Circle Test Results"
 author: "Matthew Goodsell"
-date: "6/10/2020"
+date: "6/12/2020"
 output:
   html_document:
    keep_md: TRUE 
 ---
+
 
 ```{r packages & loading data, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -14,11 +15,11 @@ knitr::opts_chunk$set(echo = FALSE)
 pacman::p_load(tidyverse)
 
 # loading in data
-test_0.09 <- read_csv("modified_TestResults_circle_rad_0.09.csv")
+test_0.09 <- read_csv("Data/New_modified_TestResults_circle_rad_0.09.csv")
 
-test_0.1 <- read_csv("modified_TestResults_circle_rad_0.10.csv")
+test_0.1 <- read_csv("Data/New_modified_TestResults_circle_rad_0.1.csv")
 
-test_0.11 <- read_csv("modified_TestResults_circle_rad_0.11.csv")
+test_0.11 <- read_csv("Data/New_modified_TestResults_circle_rad_0.11.csv")
 ```
 
 ```{r wrangling data}
@@ -42,8 +43,8 @@ all_dat <- bind_rows(dat_0.09, dat_0.1, dat_0.11) %>%
 ### getting better labels on the facet_grid
 label_all_dat <- all_dat
 
-label_all_dat$Radius <- factor(label_all_dat$`Search Radius`, levels =c("0.099", "0.01", "0.011"),
-                               labels = c("0.099", " 0.010", "0.011"))
+label_all_dat$Radius <- factor(label_all_dat$`Search Radius`, levels =c("0.09", "0.10", "0.11"),
+                                    labels = c("0.09", "0.10", "0.11"))
 
 ### have to create a new data set then pivot longer the average count 
 new <- all_dat %>% 
@@ -61,15 +62,15 @@ new <- all_dat %>%
 
 Insights: 
 
-- Method 1 seems to always to more accurate, and it appears to be radius independent
+- Method 1 
 
-- Method 1 seems to favor radius of .099 
+- Method 1 
 
-- Method 2 also prefers a search radius of 0.099
+- Method 2 
 
-### Data from test circle of radius 0.099
+### Data from test circle of radius 0.09
 
-```{r testRadius-0.099}
+```{r testRadius-0.09}
 
 label_all_dat %>% 
   filter(test_circle == "Rad_0.09") %>%
@@ -80,19 +81,21 @@ label_all_dat %>%
   geom_point(aes(id, y=`Distance 2`)) + 
   geom_line(aes(id, y=`Distance 2`)) +
   facet_grid(`Search Radius`~Resolution,
-             labeller=label_both) + 
+             labeller=label_both, 
+             scales = "free") + 
   labs(title = "Method 1 & 2 results from imperfect circle of radius 0.09", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank(),
+        axis.title.y = element_text(size = 16))
 ```
 
 
-### Data from test circle of radius 0.01
+### Data from test circle of radius 0.1
 
-```{r testRadius-0.01}
+```{r testRadius-0.1}
 label_all_dat %>% 
   filter(test_circle == "Rad_0.1") %>%
   mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) %>% 
@@ -104,19 +107,20 @@ label_all_dat %>%
   facet_grid(`Search Radius`~Resolution,
              labeller=label_both, 
              scales = "free") + 
-  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.01", 
+  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.1", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank(),
+        axis.title.y = element_text(size = 16))
 
 ```
 
 
-### Data from test circle of radius 0.011
+### Data from test circle of radius 0.11
 
-```{r testRadius-0.011, echo=FALSE}
+```{r testRadius-0.11, echo=FALSE}
 label_all_dat %>% 
   filter(test_circle == "Rad_0.11") %>%
   mutate(`Search Radius` = fct_inorder(as.factor(`Search Radius`))) %>% 
@@ -128,12 +132,13 @@ label_all_dat %>%
   facet_grid(`Search Radius`~Resolution,
              labeller=label_both, 
              scales = "free") + 
-  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.011", 
+  labs(title = "Method 1 & 2 results from imperfect circle of radius 0.11", 
        subtitle = "Blue = Method 1",
        y = "Distance from dumd mean") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank(),
+        axis.title.y = element_text(size = 16))
 ```
 
 
@@ -148,8 +153,10 @@ all_dat %>%
   geom_jitter() +
   labs(title = "Overall Distribution of Method 1 by Radius and Resolution", 
        x = "Search Radius") +
-  facet_grid(`Search Radius`~Resolution, labeller = label_both) +
-  theme(legend.position = "none")
+  facet_grid(~Resolution, labeller = label_both) +
+  theme(legend.position = "none", 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16))
 ```
 
 ### Overal Distribution of method 1
@@ -162,7 +169,9 @@ all_dat %>%
   geom_jitter() +
   labs(title = "Overall Distribution of Method 1 by Radius", 
        x = "Search Radius") +
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16))
 ```
 
 ### Distribution of Method 2
@@ -176,7 +185,9 @@ all_dat %>%
   labs(title = "Overall Distribution of Method 2 by Radius and Resolution", 
        x="Search Radius") +
   facet_grid(~Resolution, labeller = label_both) +
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16))
 ```
 
 ### Overall Distribution of Method 2
@@ -187,7 +198,10 @@ all_dat %>%
   geom_boxplot() + 
   geom_jitter() +
   labs(title = "Overall Distribution of Method 2 by Radius", 
-       x = "Search Radius")
+       x = "Search Radius") +
+  theme(legend.position = "none", 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16))
 ```
 
 ## Bar plots of Average Votes
@@ -255,9 +269,9 @@ all_dat %>%
 ```
 
 
-### Average highest vote for test circle of 0.01
+### Average highest vote for test circle of 0.1
 
-```{r avg high vote 0.01}
+```{r avg high vote 0.1}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding.
 
@@ -285,9 +299,9 @@ all_dat %>%
 ```
 
 
-### Average highest vote for test circle of 0.011
+### Average highest vote for test circle of 0.11
 
-```{r avg high vote 0.011}
+```{r avg high vote 0.11}
 ## bar plot with position dodge showing the mean of highest vote 
 # extracting the vote and rounding.
 #getting the proper numbers to label with for test circle 0.011
@@ -332,7 +346,10 @@ new %>%
   labs(title = "Average vote every box outside the highest vote",
        y="Average layer vote", 
        x="Test circle") +
-  theme(axis.text.x = element_text(angle = 90))
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16))
 ```
+
 
 

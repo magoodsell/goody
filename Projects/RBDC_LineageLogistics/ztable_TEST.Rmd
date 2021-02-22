@@ -1,0 +1,57 @@
+---
+title: "Untitled"
+author: "Matthew Goodsell"
+date: "6/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r}
+pacman::p_load(tidyverse, ztable)
+
+#options(ztable.type="html")
+z=ztable(head(iris),caption="Table 1. Basic Table")
+z
+```
+
+```{r}
+### Loading data ###
+new_test_0.05 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.05.csv")
+new_test_0.1 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.1.csv")
+new_test_0.15 <- read_csv("Data/OldG_newR_TestResults_circle_rad_0.15.csv")
+#mutating to identify what test circle the data is from
+new_dat_0.05 <- new_test_0.05 %>% 
+  mutate(test_circle = "Rad_0.05")
+new_dat_0.1 <- new_test_0.1 %>% 
+  mutate(test_circle = "Rad_0.1")
+new_dat_0.15 <- new_test_0.15 %>% 
+  mutate(test_circle = "Rad_0.15")
+# binding rows of the data
+new_all_dat <- bind_rows(new_dat_0.05, new_dat_0.1, new_dat_0.15) %>% 
+  mutate(id = row_number()) %>% # give it an index
+  rename("Search Radius" = "Radius")  
+# getting better labels on the facet_grid
+new_label_all_dat <- new_all_dat
+
+new_label_all_dat$Radius <- factor(new_label_all_dat$`Search Radius`, levels =c("0.05", "0.10", "0.15"),
+                                   labels = c("0.05", "0.10", "0.15"))
+
+### Table ###
+
+
+conf_wider <- new_label_all_dat %>% 
+  select(-c(4:26)) %>% 
+  select(-c(Gitter, Radius, id)) %>%
+  group_by(Resolution, `Search Radius`, test_circle) %>%
+  summarise(conf_avg = mean(Confidence))  %>% 
+  pivot_wider(names_from = Resolution, values_from=conf_avg)# pivoting wider the dataset 
+
+x = ztable(head(conf_wider), caption="Confidence scores from 0 to 1")
+
+x
+```
+

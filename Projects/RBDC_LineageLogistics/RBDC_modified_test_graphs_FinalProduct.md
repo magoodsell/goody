@@ -68,8 +68,8 @@ Insights:
 
 
 ```
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
 ```
 
 ![](RBDC_modified_test_graphs_FinalProduct_files/figure-html/overall-1.png)<!-- -->
@@ -78,8 +78,8 @@ Insights:
 
 
 ```
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
 ```
 
 ![](RBDC_modified_test_graphs_FinalProduct_files/figure-html/avg high vote 0.09-1.png)<!-- -->
@@ -89,8 +89,8 @@ Insights:
 
 
 ```
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
 ```
 
 ![](RBDC_modified_test_graphs_FinalProduct_files/figure-html/avg high vote 0.01-1.png)<!-- -->
@@ -100,8 +100,8 @@ Insights:
 
 
 ```
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
-## `summarise()` regrouping output by 'Search Radius' (override with `.groups` argument)
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'Search Radius'. You can override using the `.groups` argument.
 ```
 
 ![](RBDC_modified_test_graphs_FinalProduct_files/figure-html/avg high vote 0.011-1.png)<!-- -->
@@ -115,7 +115,7 @@ Insights:
 
 
 ```
-## `summarise()` regrouping output by 'Search Radius', 'Resolution', 'test_circle' (override with `.groups` argument)
+## `summarise()` has grouped output by 'Search Radius', 'Resolution', 'test_circle'. You can override using the `.groups` argument.
 ```
 
 ![](RBDC_modified_test_graphs_FinalProduct_files/figure-html/avg layer mean-1.png)<!-- -->

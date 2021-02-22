@@ -1,0 +1,286 @@
+---
+title: "Results on PointCloud Poles from rack files"
+author: "Matthew Goodsell"
+date: "6/26/2020"
+output: 
+  html_document:
+   keep_md: TRUE 
+   code_folding: hide 
+---
+
+```{r loading packages and data, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+pacman::p_load(tidyverse, gt, DT, gghighlight, ztable)
+
+all <- read_csv("Data/RealData_TestResults_AllValues.csv")
+zeros <- read_csv("Data/RealData_TestResults_ZeroValues.csv")
+```
+
+```{r wrangling data, echo=FALSE, message=FALSE}
+
+all_longer <- all %>% 
+   rename("Layer 0" = `Highest Vote`) %>% 
+   select(-c(`Distance 1`, `Distance 2`, "Confidence")) %>% 
+   pivot_longer(-c(`Search Radius`, Resolution, `File name`),
+                names_to="Layer",
+                values_to = "Layer_vote")
+
+# renaming File name column values
+all$`File name`[all$`File name`== "rack_1.json"] <- "rack_1"
+all$`File name`[all$`File name`== "rack_2.json"] <- "rack_2"
+all$`File name`[all$`File name`== "rack_3.json"] <- "rack_3"
+all$`File name`[all$`File name`== "rack_4.json"] <- "rack_4"
+all$`File name`[all$`File name`== "rack_5.json"] <- "rack_5"
+all$`File name`[all$`File name`== "rack_6.json"] <- "rack_6"
+all$`File name`[all$`File name`== "rack_7.json"] <- "rack_7"
+all$`File name`[all$`File name`== "rack_8.json"] <- "rack_8"
+all$`File name`[all$`File name`== "rack_9.json"] <- "rack_9"
+all$`File name`[all$`File name`== "rack_10.json"] <- "rack_10"
+all$`File name`[all$`File name`== "rack_11.json"] <- "rack_11"
+all$`File name`[all$`File name`== "rack_12.json"] <- "rack_12"
+all$`File name`[all$`File name`== "rack_13.json"] <- "rack_13"
+all$`File name`[all$`File name`== "rack_14.json"] <- "rack_14"
+all$`File name`[all$`File name`== "rack_15.json"] <- "rack_15"
+all$`File name`[all$`File name`== "rack_16.json"] <- "rack_16"
+all$`File name`[all$`File name`== "rack_17.json"] <- "rack_17"
+all$`File name`[all$`File name`== "rack_18.json"] <- "rack_18"
+all$`File name`[all$`File name`== "rack_19.json"] <- "rack_19"
+all$`File name`[all$`File name`== "rack_20.json"] <- "rack_20"
+
+# for a table 
+all_wider <- all %>% 
+   select(-c(4:26)) %>% 
+   select(-`File name`) %>% 
+   group_by(`Search Radius`, Resolution) %>% 
+   summarise(conf_avg = mean(Confidence)) %>% 
+   pivot_wider(names_from = `Search Radius`, values_from=conf_avg)
+# table with racks
+rack_wider <- all %>% 
+   select(-c(4:26)) %>%  
+   mutate(`File name` = fct_inorder(as.factor(`File name`))) %>% 
+   group_by(`File name`, `Search Radius`, Resolution) %>% 
+   summarise(conf_avg = mean(Confidence)) %>% 
+   pivot_wider(names_from = `Search Radius`, values_from=conf_avg)
+
+```
+
+
+# Graphs {.tabset .tabset-fade .tabset-pills}
+
+## Line Graphs {.tabset .tabset-pills}
+
+```{r line graph}
+
+
+all %>% 
+   # need to factor them in order
+   ggplot(aes(group=Resolution)) +
+   geom_point(aes(x=fct_inorder(as.factor(`File name`)), y=`Distance 1`), color="blue4") +
+   geom_line(aes(x=fct_inorder(as.factor(`File name`)), y=`Distance 1`), color="blue4") +
+   geom_point(aes(x=fct_inorder(as.factor(`File name`)), y=`Distance 2`)) +
+   geom_line(aes(x=fct_inorder(as.factor(`File name`)), y=`Distance 2`)) + 
+   facet_grid(`Search Radius`~Resolution) +
+   labs(title = "Distance to estimated center by Resolution and Search Radius", 
+        subtitle = "Blue = Method 1", 
+        x = "Rack",
+        y = "Distance to estimated center") +
+   theme(axis.text.x = element_text(angle = 90), 
+         axis.title.y = element_text(size = 16),
+         axis.title.x = element_text(size = 16))
+
+
+```
+
+
+## Distribution Graphs {.tabset .tabset-pills}
+
+```{r Distribution graph D1}
+all %>% 
+   select(-`Distance 2`) %>% 
+   ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 1`, color=fct_inorder(as.factor(`Search Radius`)))) +
+   #geom_point() +
+    geom_boxplot() +
+   #geom_jitter() +
+   #gghighlight(`Search Radius` == 0.1) +
+   facet_grid(~Resolution, labeller = label_both, scales = "free") +
+   labs(title = "Distribution of Search Radius by Resolution for Method 1",
+        y = "Distance 1", 
+        x = "Search Radius") +
+   theme(axis.text.x = element_text(angle = 90), 
+         legend.position = "none", 
+         axis.title.x = element_text(size = 16), 
+         axis.title.y = element_text(size = 16))
+
+```
+
+```{r five number summary, include=FALSE}
+# all %>% 
+#    group_by(`Search Radius`, Resolution) %>% 
+#    summary(`Distance 1`)
+```
+
+```{r Distribution Graph D2}
+all %>% 
+   select(-`Distance 1`) %>% 
+   ggplot(aes(fct_inorder(as.factor(`Search Radius`)), y=`Distance 2`,    color=fct_inorder(as.factor(`Search Radius`)))) +
+   geom_boxplot() +
+   geom_jitter() +
+   #gghighlight(`Search Radius` == 0.1) +
+   facet_grid(~Resolution, labeller = label_both, scales = "free") +
+   labs(title = "Distribution of Search Radius by Resolution for Method 2",
+        y = "Distance 2", 
+        x = "Search Radius") +
+   theme(axis.text.x = element_text(angle = 90), 
+         legend.position = "none", 
+         axis.title.x = element_text(size = 16), 
+         axis.title.y = element_text(size = 16))
+```
+
+
+## Bar Graphs {.tabset .tabset-pills}
+
+
+```{r bar graph, message=FALSE, warning=FALSE}
+# get the average high vote from all search radii groupby resolution and facet_grid
+# all %>% 
+#    group_by(`File name`, `Search Radius`, Resolution) %>% 
+#    summarise(avg_hv = mean(`Highest Vote`))
+
+test <- all %>%
+  group_by(`Search Radius`, Resolution) %>% 
+  summarise(avg_high_vote = mean(`Highest Vote`)) %>% 
+  round(., digits = 2) %>% 
+  pull(avg_high_vote)
+
+
+all %>% 
+   group_by(`Search Radius`, Resolution) %>% 
+   summarise(avg_hv = mean(`Highest Vote`)) %>%
+   ggplot(aes(x=as.factor(Resolution), y=avg_hv, fill=Resolution)) +
+   geom_col(position = "dodge") + 
+   geom_text(aes(label=test), nudge_y = 10) +
+   facet_grid(~`Search Radius`, labeller = label_both) +
+   labs(title = "Average Highest Vote by Search Radius and Resolution", 
+        y= "Votes", 
+        x= "Resolution") +
+   theme(legend.position = "none", 
+         axis.title.x = element_text(size = 16), 
+         axis.title.y = element_text(size = 16))
+
+```
+
+
+## Average Layer Mean {.tabset .tabset-pills}
+
+```{r avg layer mean, message=FALSE}
+
+# all_longer %>% 
+# ggplot(aes(x=`Search Radius`, y=Layer_vote, group=Layer, fill=Layer)) +
+#    geom_col(position = "dodge") +
+#    facet_grid(~Resolution, labeller = label_both, scales = "free") +
+#    labs(title = "Average Layer Mean", 
+#         y= "Votes") +
+#    theme(axis.text = element_text(angle = 90), 
+#          axis.title.y = element_text(size = 16), 
+#          axis.title.x = element_text(size = 16)) 
+
+all_longer %>% 
+   group_by(`Search Radius`, Resolution, Layer) %>% 
+   summarise(layer_avg = mean(Layer_vote)) %>% 
+   ggplot(aes(x=`Search Radius`, y=layer_avg, group=Layer, fill=Layer)) +
+   geom_col(position = "dodge") +
+   facet_grid(~Resolution, labeller = label_both, scales = "free") +
+   labs(title = "Average Layer Mean", 
+        y= "Votes") +
+   theme(axis.text = element_text(angle = 90), 
+         axis.title.y = element_text(size = 16), 
+         axis.title.x = element_text(size = 16)) 
+
+
+```
+
+### Table 
+
+```{r avg layer mean table}
+avg_mean <- all_longer %>% 
+   group_by(`Search Radius`, Resolution, Layer) %>% 
+   summarise(layer_avg = mean(Layer_vote))
+
+datatable(avg_mean, class = 'cell-border stripe')
+
+```
+
+
+## Confidence Tables 
+
+### Confidence by Radius and Resolution
+
+```{r conf table, message=FALSE}
+datatable(all_wider, class = 'cell-border stripe',
+          colnames = c('Resolution', 'SR: 0.08', 'SR: 0.09', 'SR: 0.1', "SR: 0.11", "SR: 0.12"))
+```
+
+
+```{r ztable, results='asis', message=FALSE, include=FALSE}
+mycolor <-  gradientColor(low = "red", mid = "yellow", high = "green", n = 10, plot = TRUE)
+
+df <- data.frame(unclass(all_wider), check.names = FALSE, stringsAsFactors = FALSE)
+
+options(ztable.type = "html")
+x = ztable(head(df))
+x %>%
+  makeHeatmap(cols = c(1:6), mycolor = mycolor) %>%
+  print(caption = "Confidence")
+
+## need to make the decimal show three places
+```
+
+### Confidence by rack
+
+- 1 values are a result of our threshold for confidence. 
+
+```{r conf by rack, message=FALSE}
+
+# DT
+datatable(rack_wider, class = 'cell-border stripe',  options = list(pageLength = 9))
+
+# ZTABLE
+# mycolor = gradientColor(low = "red", mid = "yellow", high = "green", n = 20, plot = TRUE)
+# 
+# df_rack <- data.frame(unclass(rack_wider), check.names = FALSE, stringsAsFactors = FALSE)
+# 
+# options(ztable.type = "viewer")
+# r = ztable(head(df_rack))
+# r %>%
+#   makeHeatmap(cols = c(1:6), mycolor = mycolor) %>%
+#   print(caption = "Confidence")
+## need to show three decimals for resolution and not color it
+
+# GT - not working like I hope / want to group it by Rack
+# gt(rack_wider, groupname_col=rack_wider$Resolution, rowname_col = rack_wider$`File name`)
+```
+
+
+
+## new graph
+
+```{r}
+all %>% 
+   ggplot(aes(x=Confidence, y=`Distance 1`)) +
+   geom_point() +
+   #scale_shape_manual(values = c(1,3,4)) +
+   facet_grid(`Search Radius`~Resolution) +
+   labs(title = "Confidence by Method 1",
+        y= "Distance of Method 1")
+```
+
+```{r}
+all %>% 
+   ggplot(aes(x=Confidence, y=`Distance 2`)) +
+   geom_point() +
+   #scale_shape_manual(values = c(1,3,4)) +
+   facet_grid(`Search Radius`~Resolution) +
+   labs(title = "Confidence by Method 2", 
+        y= "Distance of Method 2")
+```
