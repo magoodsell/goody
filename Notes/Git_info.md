@@ -99,3 +99,6 @@ git push --set-upstream origin my-branch
 
 # removing a file 
 git rm -r <file>
+
+# Adding a folder 
+git add <foldername>/
