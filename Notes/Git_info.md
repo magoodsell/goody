@@ -14,6 +14,7 @@
 
 https://git-scm.com/docs 
 https://docs.github.com/en/get-started/using-git/about-git
+https://www.atlassian.com/git/ 
 
 
 ## configuring git
@@ -27,8 +28,17 @@ https://docs.github.com/en/get-started/using-git/about-git
 - git pull (to get the latest version of the project if you are collaborating)
 - git add 
     - . for all files that have changes
-    - <specific file or files> file1.md file2.md
+    - <specific file or files> file1.extension file2.extension
+    - p for portions of the file 
+        - y to stage chunk 
+        - n to ignore the chunk
+        - s to split the chunk 
+        - e to manually edit
+        - q to exit
 - git commit -m "..."
+    - a adds a snapshot of all messages
+    - am combines a and m
+    - amend will change the last commit by opening it up and all staged changes will be added the previous
 - git push
 
 ## Important git commands 
@@ -38,6 +48,7 @@ https://docs.github.com/en/get-started/using-git/about-git
  - git switch - Switch branches
  - git fetch -  Download objects and refs from another repository
  - git merge - Join two or more development histories together
+ - git restore - discard changes in the working directory
 
 ## Making changes 
 - be in the right derectory
