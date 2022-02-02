@@ -221,8 +221,11 @@ targets = <dataset>.<column>
 x_train, x_test, y_train, y_test = train_test_split(features, targets, test_size=.3, random_state=76)
 
 5. Use a classifier
+6. Train the model 
+7. Make predicitions with the model
+8. test the accuracy of the predictions 
 
-Process:
+Process to the above:
 
 ##### create a classification model
 classifier_<abbreviations_of_classifer> = <classifier>()
@@ -233,9 +236,7 @@ y_predicted = classifier_DT.predict(x_test)
 ##### test how accurate those predictions are
 metrics.accuracy_score(y_test, y_predicted)
 
-6. Train the model 
-7. Make predicitions with the model
-8. test the accuracy of the predictions 
+
 
 ```python
 print(confusion_matrix(y_test, y_predicted))
