@@ -279,7 +279,7 @@ pd.factorize
 **Recall** - captures how many of the actual positives the model captures. Good to use when there is a *high cost for false negatives (which are actually positives)*
    - Formula:
       $$\frac{TP}{(TP + FN)}$$
-      * denominator is the toal actual positives
+      * denominator is the total actual positives
 
 
 **Precision** - how good the model was at testing a positive results. Good to use when there is a *high cost for false positive*
