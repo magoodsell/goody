@@ -106,6 +106,8 @@ git add file1.md file2.md
 git commit -m "my snapshot"
 
 # push changes to github
+    - first command [--set-upstream] tells connect my branch to the origin in the current repository.
+    - second command calls my branch.
 git push --set-upstream origin my-branch
 
 # removing a file 
@@ -113,3 +115,15 @@ git rm -r <file>
 
 # Adding a folder 
 git add <foldername>/
+
+
+### How to Merge 
+
+# Make sure you on the branch you want to be updated from the merge
+git checkout <branch-name>
+
+# Merging 
+git merge <branch-name>
+
+- this will be the branch you want to the updates to come from. 
+- this probably cause merging conflicts and you will need to manage those. You might also neeed to commit and push. 
