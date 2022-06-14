@@ -51,7 +51,8 @@ min_2021 <- min(trans_2021$Date)
 
 trans_2021 %>% ggplot(aes(x = fct_infreq(`Account Name`), y = Amount )) + 
   geom_col() + 
-  theme(axis.text.x = element_text(angle = 90))
+  theme(axis.text.x = element_text(angle = 90)) + 
+  theme_bw()
 
 trans_2021 %>% ggplot(aes(x=`Transaction Type`, y = Amount)) + 
   geom_col()
@@ -59,4 +60,5 @@ trans_2021 %>% ggplot(aes(x=`Transaction Type`, y = Amount)) +
 trans_2021 %>% 
   filter(`Transaction Type` == 'debit') %>% 
   summarise(debit_sum = sum(Amount))
+
 
