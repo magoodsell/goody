@@ -1,63 +1,121 @@
+---
+title: "Principal Component Analysis"
+author: "Matthew Goodsell"
+date: '2022-07-19'
+output: html_document
+---
+
+```{r loading packages, include=FALSE}
+# Global options
+knitr::opts_chunk$set(echo = FALSE)
+
+pacman::p_load(tidyverse, ggbiplot, DT)
+
+# Code used 
+# library(devtools)
+# install_github("vqv/ggbiplot")
+
+# library(devtools)
+# library(ggbiplot)
+```
+
+```{r Loading Data}
+# load(mtcars)
+
+```
+
+## Using mtcars data
+
+```{r}
+DT::datatable(mtcars)
+```
+
+
+
+```{r , echo=TRUE}
+
 # Example of a Principal Component Analysis 
 # https://www.datacamp.com/tutorial/pca-analysis-r
 
 #########
 # NOTES # 
 # works best with numerical data
-
 #########
-
-pacman::p_load(tidyverse)
-
-# Dataset 
-View(mtcars)
 
 ## CALCULATING 
 mtcars.pca <- prcomp(mtcars[,c(1:7,10,11)], center = TRUE, scale. = TRUE)
 # test <- prcomp(mtcars, center= TRUE, scale. = TRUE)
 # summary(test)
 
+# str(mtcars.pca)
+```
+
+
+```{r pca summary}
 summary(mtcars.pca)
+```
 
-str(mtcars.pca)
 
+```{r rotation}
 mtcars.pca$rotation
 # realtionship between the intial variables and the principal components
+```
+
+```{r dev}
 mtcars.pca$sdev
 # standard deviation of each principal component 
+```
+
+```{r center}
 mtcars.pca$center
 # the center point of each principal component 
+```
+
+```{rcomponent}
 mtcars.pca$scale
 # of each principal component 
+```
+
+```{r}
 mtcars.pca$x
 # values of each observation in terms of the principal component
+```
 
 
-# library(devtools)
-# install_github("vqv/ggbiplot")
-
-library(devtools)
-library(ggbiplot)
+## Ploting 
 
 
-
+```{r biplot}
 ggbiplot(mtcars.pca)
 # A biplot is a type of plot that will allow you to visualize how the
 # samples relate to one another in our PCA (which samples are similar 
 # and which are different) and will simultaneously reveal how each variable contributes to each principal component.
+```
 
+```{r}
 ggbiplot(mtcars.pca, labels=rownames(mtcars))
+```
+
+```{r}
+# not sure what this code does exactly
 
 mtcars.country <- c(rep("Japan", 3), rep("US",4), rep("Europe", 7),rep("US",3), "Europe", rep("Japan", 3), rep("US",4), rep("Europe", 3), "US", rep("Europe", 3))
+```
 
+```{r}
 ggbiplot(mtcars.pca,ellipse=TRUE, labels=rownames(mtcars), groups=mtcars.country)
+```
 
+```{r}
 # Let's have a look at PC3 and PC4
 ggbiplot(mtcars.pca,ellipse=TRUE,choices=c(3,4),labels=rownames(mtcars), groups=mtcars.country)
+```
 
-# Let's take a moment to recap: having performed a PCA using the mtcars dataset, we can see a clear 
-# separation between American and Japanese cars along a principal component that is closely correlated 
-# to cyl, disp, wt, and mpg. This provides us with some clues for future analyses; if we were to try to b
-# uild a classification model to identify the origin of a car, these variables might be useful.
+Let's take a moment to recap: having performed a PCA using the mtcars dataset, we can see a clear 
+separation between American and Japanese cars along a principal component that is closely correlated 
+to cyl, disp, wt, and mpg. This provides us with some clues for future analyses; if we were to try to build a classification model to identify the origin of a car, these variables might be useful.
 
+```{r}
 ggbiplot(mtcars.pca,ellipse=TRUE,circle=TRUE, labels=rownames(mtcars), groups=mtcars.country)
+```
+
